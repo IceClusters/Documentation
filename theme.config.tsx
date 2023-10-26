@@ -7,7 +7,7 @@ import { IconFolder, IconFile} from '@tabler/icons-react';
 function useHead() {
   const { asPath } = useRouter();
   const { frontMatter, title } = useConfig();
-  const url = `https://icdocs.github.io${asPath}`;
+  const url = `https://icclusters.github.io${asPath}`;
   const description = frontMatter.description || "Documentation for Ice Cluster resources";
 
   return (
@@ -57,12 +57,12 @@ const config: DocsThemeConfig = {
   ),
   
   project: {
-    link: 'https://github.com/iceclusters/icdocs.github.io',
+    link: 'https://github.com/iceclusters/icclusters.github.io',
   },
   chat: {
-    link: 'https://discord.icdocs.github.io',
+    link: 'https://discord.icclusters.github.io',
   },
-  docsRepositoryBase: 'https://github.com/iceclusters/icdocs.github.io/blob/main',
+  docsRepositoryBase: 'https://github.com/iceclusters/icclusters.github.io/blob/main',
   footer: {
     text: 'Ice Cluster',
   },
