@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/shuding/nextra-docs-template/issues"
   },
-  "homepage": "https://iceclusters.github.io/",
+  "homepage": "https://iceclusters.github.io/documentation/",
   "dependencies": {
     "@docsearch/css": "3",
     "@docsearch/react": "3",
