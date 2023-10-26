@@ -6,7 +6,7 @@ const withNextra = require('nextra')({
 module.exports = {
   ...withNextra(),
   rewrites: null,
-  basePath: '/documentation',
+  basePath: 'https://iceclusters.github.io/documentation/',
   output: 'export',
   images: {
     unoptimized: true,
