@@ -1,0 +1,121 @@
+---
+title: Intallation
+---
+import { Steps } from 'nextra-theme-docs';
+import { Callout } from 'nextra/components';
+
+## Installation
+
+<Callout type="info">
+
+It is **recommended** that one follows each step sequentially from the outset to ensure that no installation errors arise.
+
+</Callout>
+<Steps>
+### Start Order
+
+In order for the resource to start correctly and not receive any errors, we must start the resources in the following order
+
+```cfg {3} showLineNumbers filename="server.cfg"
+ensure core
+...
+ensure ichud
+```
+
+### Setup Config
+ 
+In order for the script to function properly, you must change the Config.Framework setting to your framework in this case it will be "qb-core". Feel free to make any other necessary changes as well.
+
+```lua {3, 5-13, 15} showLineNumbers filename="config.lua"
+Config = {}
+
+Config.Framework = "esx" -- newqb, oldqb, esx, newesx
+
+Config.StatusHud = true  -- If you set it to true, the hud will be activated
+Config.CarHud = true     -- If you set it to true, the Car Hud will be activated
+Config.Notify = true     -- If you set it to true, notifications will be activated
+Config.CarPlayer = true  -- If you set it to true, the Car Player will be activated
+Config.MusicPlayer = true  -- If you set it to true, the Music of the Tablet will be show
+Config.EngineHud = true  -- If you set it to true, the Engine Hud will be activated
+Config.RefreshSpeedoMeterTime = 80 -- Time in ms to refresh the speedometer (50 = 0.05 seconds, 100 = 0.10 seconds) if you want to speedometer to refresh faster decress this value.
+Config.SetZoomMinimap = 1 -- Set the minimap zoom (0 = normal, 1 = zoomed in)
+Config.DisableMinimapModifications = false -- If you set it to true all changes maded to the map will desappear, this will help if there's another script changing minimap stuff.
+
+Config.HideFullStatus = true -- If you set it to true, all the status hud that are at 100% will be hided,if you set to false the status hud will be showed always
+
+-- Config for the Car Radio System Sound
+Config.RefreshTimeSound = 0 -- How much ofter the player position is updated ?
+Config.distanceBeforeUpdatingPos = 40 -- how much close player has to be to the sound before starting updating position ?
+
+--[[ 
+    OPTIONS: LegacyFuel, oxFuel, cdn-fuel, standalone
+    OTHER: set the name of the export function, for example: myFuel
+]]
+Config.FuelSystem = "standalone" -- Set the name of the export functions used by the fuel
+
+Config.SeatBeltOn = "You have fastened your seat belt"
+Config.SeatBeltOff = "You have unbuckled your seatbelt"
+Config.notVehicleSeatBelt = "This vehicle does not have a seat belt"
+Config.commandSeatBelt = "belt"
+Config.cruiseOnText = "You turned on speed limiter"
+Config.cruiseOffText = "You turned off speed limiter"
+Config.cruiseControlOnText = "You turned on cruise control"
+Config.cruiseControlOffText = "You turned off cruise control"
+Config.cruiseControlnotinVehicleText = "You are not in any vehicle or you are not the driver"
+Config.StreamerModeONMSG = "You have activated streamer mode for music."
+Config.StreamerModeOFFMSG = "You have deactivated the streamer mode for music."
+Config.SpeedUnit = true -- True is km/h -- False is mp/h
+Config.notvehicleCarPlay = "This vehicle does not have carplay"
+Config.SetNewWaypoint = "You have set a new waypoint"
+Config.AnyVehicle = "You are not in any vehicle"
+Config.MoneyNotify = "You have ${x} in your wallet"
+Config.BankNotify = "You have ${x} in your bank"
+
+
+
+Config.SeatBeltEjectSpeed = 20
+Config.SeatBeltEjectAccel = 100.0
+Config.TimeOutRequestMax = 10 -- Max seconds if user don't answer the request
+Config.SetDistanceAudio = 7.5 -- Distance to hear the audio
+
+------------ KEYS -------------
+
+Config.SeatBeltKey = "X"
+Config.IndicatorBothKey = "BACK"
+Config.IndicatorRightKey = "RIGHT"
+Config.IndicatorLeftKey = "LEFT"
+Config.CruiseKey = "M"
+Config.CruiseControlKey = "L"
+Config.EngineButton = "J"
+Config.CarPlayerKey = "Y"
+```
+
+### Setup Translations
+
+To make changes to certain translations, you can edit the translations.js file. This file contains all the necessary settings to modify the translations.
+
+File Location: ```ice_hud\src\ui\js\config\translation.js```
+
+<Callout type="info">
+
+You must edit the text on the right, the text on the left should not change.
+
+</Callout>
+```js {4-14} showLineNumbers filename="translation.js"
+Config = {};
+
+Config.Locales = {
+    "Engine": "Engine",
+    "Stop": "Stop",
+    "Start": "Start",
+    "url_youtube": "URL YouTube",
+    "locating": "Localizing...",
+    "fuel_text": "Fuel",
+    "vehhealth_text": "Health",
+    "speed_text": "Speed",
+    "maxgear_text": "Gears",
+    "location_text": "My location",
+    "waypoint_text": "Waypoint",
+};
+```
+</Steps>

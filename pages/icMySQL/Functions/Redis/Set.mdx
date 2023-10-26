@@ -1,0 +1,74 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# Set
+The set function is to set data to the memory.
+
+## Params
+- Key(*) the name of the key.
+- Value(*) the value to set to the key.
+- Function(OPTIONAL) is the function that will be executed when the query is finished.
+
+## Return
+If you've specified a function it will return the result of the query in the function, if not it will return the result of the query.
+
+## Functions
+<Tabs items={["Exports", "Library"]}>
+<Tab>
+```lua
+exports["ice_mysql"]:RedisSet(key, value, function)
+```
+</Tab>
+<Tab>
+```lua
+MySQL.Redis.RedisSet(key, value, function)
+```
+</Tab>
+</Tabs>
+
+## Use
+### Awaitable
+<Tabs items={["Lua", "JS", "C#"]}>
+<Tab>
+```lua
+local result = MySQL.Redis.RedisSet("name", "DanielGP")
+```
+</Tab>
+<Tab>
+```js
+const result = await MySQL.Redis.RedisSet("name", "DanielGP")
+```
+</Tab>
+<Tab>
+```cs
+var result = await MySQL.Redis.RedisSet("name", "DanielGP")
+```
+</Tab>
+</Tabs>
+
+### Callback
+- Callback will return the same as the awaitable function but in the callback function.
+- If the callback is not provided it will return the same as the awaitable function.
+- If you want to make the query to execute in the main thread you have to specify a simple function like this: `() => {}` to do anything depending on the language.
+<Tabs items={["Lua", "JS", "C#"]}>
+<Tab>
+```lua
+MySQL.Redis.RedisSet("name", "DanielGP", function(result)
+    print(result)
+end)
+```
+</Tab>
+<Tab>
+```js
+MySQL.Redis.RedisSet("name", "DanielGP", (result) => {
+    console.log(result)
+})
+```
+</Tab>
+<Tab>
+```cs
+MySQL.Redis.RedisSet("name", "DanielGP", (result) => {
+    Console.WriteLine(result)
+})
+```
+</Tab>
+</Tabs>
