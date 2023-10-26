@@ -7,7 +7,7 @@ import { IconFolder, IconFile} from '@tabler/icons-react';
 function useHead() {
   const { asPath } = useRouter();
   const { frontMatter, title } = useConfig();
-  const url = `https://overextended.dev${asPath}`;
+  const url = `https://icdocs.github.io${asPath}`;
   const description = frontMatter.description || "Documentation for Ice Cluster resources";
 
   return (
@@ -57,12 +57,12 @@ const config: DocsThemeConfig = {
   ),
   
   project: {
-    link: 'https://github.com/overextended/overextended.github.io',
+    link: 'https://github.com/iceclusters/icdocs.github.io',
   },
   chat: {
-    link: 'https://discord.overextended.dev',
+    link: 'https://discord.icdocs.github.io',
   },
-  docsRepositoryBase: 'https://github.com/overextended/overextended.github.io/blob/main',
+  docsRepositoryBase: 'https://github.com/iceclusters/icdocs.github.io/blob/main',
   footer: {
     text: 'Ice Cluster',
   },
