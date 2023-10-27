@@ -6,13 +6,14 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/shuding/nextra-docs-template.git"
-	  },
-	  "author": "Shu Ding <g@shud.in>",
-	  "license": "MIT",
-	  "bugs": {
+	},
+	"author": "Shu Ding <g@shud.in>",
+	"license": "MIT",
+	"bugs": {
 		"url": "https://github.com/shuding/nextra-docs-template/issues"
-	  },
+	},
 	"dependencies": {
+		"@tabler/icons-react": "^2.40.0",
 		"next": "^14.0.0",
 		"nextra": "^2.13.2",
 		"nextra-theme-docs": "^2.13.2",
