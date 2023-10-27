@@ -19,6 +19,8 @@ function useNextSeoProps() {
   };
 }
 
+global.Headers = global.Headers || require('node-fetch').Headers;
+
 function useHead() {
   const { asPath } = useRouter();
   const { frontMatter, title } = useConfig();
