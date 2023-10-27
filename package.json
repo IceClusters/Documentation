@@ -3,6 +3,15 @@
 	"version": "0.0.1",
 	"description": "Documentation for icDoc",
 	"homepage": "https://iceclusters.github.io/documentation",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/shuding/nextra-docs-template.git"
+	  },
+	  "author": "Shu Ding <g@shud.in>",
+	  "license": "MIT",
+	  "bugs": {
+		"url": "https://github.com/shuding/nextra-docs-template/issues"
+	  },
 	"dependencies": {
 		"next": "^14.0.0",
 		"nextra": "^2.13.2",
