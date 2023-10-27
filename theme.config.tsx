@@ -67,9 +67,6 @@ const config: DocsThemeConfig = {
   footer: {
     text: 'Ice Cluster',
   },
-  search: {
-    component: <Search />,
-  },
   head: useHead,
   primaryHue: { dark: 190, light: 200 },
   sidebar: {
