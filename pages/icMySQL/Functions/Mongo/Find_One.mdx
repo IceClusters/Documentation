@@ -1,0 +1,145 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# FindOne
+
+## Definition
+Returns one document that satisfies the specified query criteria on the collection or view.
+
+If multiple documents satisfy the query, this method returns the first document according to the natural order which reflects the order of documents on the disk. In capped collections, natural order is the same as insertion order. If no document satisfies the query, the method returns `null`.
+
+If you specify a `projection` parameter, `FindOne()` returns a document that only contains the `projection` fields. The `_id` field is always included unless you explicitly exclude it.
+
+## Compatibility
+You can use FindOne() for deployments hosted in the following environments:
+- MongoDB Atlas: The fully managed service for MongoDB deployments in the cloud
+
+- MongoDB Enterprise: The subscription-based, self-managed version of MongoDB
+
+- MongoDB Community: The source-available, free-to-use, and self-managed version of MongoDB
+
+## Sintax
+The `FindOne()` method has the following form:
+```lua
+exports["icmysql"]:MongoFindOne(
+   {
+      collection = "<collection>",
+      query = <query>,
+      options = <options>
+   }
+)
+```
+The `FindOne()` method takes the following parameters:
+- `<collection>`: The name of the collection to insert the document into.
+- `<query>`: A document that specifies the query conditions. The query syntax is identical to the read operation query syntax; i.e. `Find()`.
+- `<options>`: Optional. A document expressing the write concern. Omit to use the default write concern.
+
+## Examples
+##### **With Empty Query Specification**
+The following operation returns a single document from the bios collection:
+```lua
+exports["icmysql"]:MongoFindOne({ collection = "bios"});
+```
+
+##### **With a Query Specification**
+The following operation returns the first matching document from the bios collection where either the field `first` in the embedded document `name` starts with the letter `G` or where the field `birth` is less than `new Date('01/01/1945')`:
+```lua
+exports["icmysql"]:MongoFindOne(
+   {
+      collection = "bios",
+      query = {
+         ["$or"] = {
+            { "name.first" = "G" }, 
+            { "birth" = { $lt = new Date('01/01/1945') }}
+         }
+      }
+   }
+);
+```
+
+##### **With a Projection**
+The `projection` parameter specifies which fields to return. The parameter contains either include or exclude specifications, not both, unless the exclude is for the `_id` field.
+
+**Specify the Fields to Return**
+
+The following operation finds a document in the bios collection and returns only the name, contribs and _id fields:
+```lua
+exports["icmysql"]:MongoFindOne(
+   {
+      collection = "bios",
+      query = { "name.last" = "Turing" },
+      options = {
+         projection = {
+            name = 1,
+            contribs = 1
+         }
+      }
+   }
+);
+```
+
+**Return All but the Excluded Fields**
+The following operation returns a document in the bios collection where the `contribs` field contains the element `OOP` and returns all fields except the `_id` field, the `first` field in the `name` embedded document, and the `birth` field:
+```lua
+exports["icmysql"]:MongoFindOne(
+   {
+      collection = "bios",
+      query = { "contribs" = "OOP" },
+      options = {
+         projection = {
+            _id = 0,
+            ["name.first"] = 0,
+            birth = 0
+         }
+      }
+   }
+);
+```
+
+##### **The `FindOne` Result Document**
+You cannot apply cursor methods to the result of `FindOne()` because a single document is returned. You have access to the document directly:
+```lua
+local result = exports["icmysql"]:MongoFindOne({ collection = "bios" });
+print(result.name);
+```
+
+##### **Use Variables in `let` Option**
+You can specify query options to modify query behavior and indicate how results are returned.
+
+For example, to define variables that you can access elsewhere in the `FindOne` method, use the `let` option. To filter results using a variable, you must access the variable within the `$expr` operator.
+
+Create a collection `cakeFlavors`:
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "cakeFlavors",
+      documents = {
+         { _id = 1, name = "Chocolate", rating = 5 },
+         { _id = 2, name = "Vanilla", rating = 4 },
+         { _id = 3, name = "Coffee", rating = 4 },
+         { _id = 4, name = "Strawberry", rating = 3 }
+      }
+   }
+);
+```
+
+The following example defines a `targetFlavor` variable in `let` and uses the variable to retrieve the chocolate cake flavor:
+```lua
+exports["icmysql"]:MongoFindOne(
+   {
+      collection = "cakeFlavors",
+      query = { _id = 1 },
+      options = {
+         let = { targetFlavor = "Chocolate" },
+         query = {
+            $expr = {
+               $eq = [ "$name", "$$targetFlavor" ]
+            }
+         }
+      }
+   }
+);
+```
+Output:
+```json
+{ flavor: 'chocolate' }
+```

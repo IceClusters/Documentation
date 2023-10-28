@@ -1,0 +1,268 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# InsertMany
+
+## Definition
+Inserts multiple documents into a collection.
+
+**Returns:** A document containing:
+- An `acknowledged` boolean, set to `true` if the operation ran with write concern or `false` if write concern was disabled
+- An `insertedIds` array, containing `_id` values for each successfully inserted document
+
+## Compatibility
+You can use InsertMany() for deployments hosted in the following environments:
+- MongoDB Atlas: The fully managed service for MongoDB deployments in the cloud
+
+- MongoDB Enterprise: The subscription-based, self-managed version of MongoDB
+
+- MongoDB Community: The source-available, free-to-use, and self-managed version of MongoDB
+
+## Sintax
+The `InsertMany()` method has the following form:
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "<collection>",
+      documents = { <document 1>, <document 2>, ... },
+      options = {
+         writeConcern: <document>,
+         ordered: <boolean>
+      }
+   }
+)
+```
+The `InsertMany()` method takes the following parameters:
+- `<document>`: An array of documents to insert into the collection.
+- `<options>`: Optional. A document expressing the write concern and other options. Omit to use the default values.
+
+## Behaviours
+Given an array of documents, `InsertMany()` inserts each document in the array into the collection.
+##### **Execution of Operations**
+By default, documents are inserted in the order they are provided.
+
+If `ordered` is set to `true` and an insert fails, the server does not continue inserting records.
+
+If `ordered` is set to `false` and an insert fails, the server continues inserting records. Documents may be reordered by `mongod` to increase performance. Applications should not depend on ordering of inserts if using an unordered 
+`InsertMany()`.
+
+The number of operations in each group cannot exceed the value of the maxWriteBatchSize of the database. The default value of `maxWriteBatchSize` is `100,000`. This value is shown in the `hello.maxWriteBatchSize` field.
+
+This limit prevents issues with oversized error messages. If a group exceeds this limit, the client driver divides the group into smaller groups with counts less than or equal to the value of the limit. For example, with the `maxWriteBatchSize` value of `100,000`, if the queue consists of `200,000` operations, the driver creates 2 groups, each with `100,000` operations.
+
+If the error report for a single batch grows too large, MongoDB truncates all remaining error messages to the empty string. If there are at least two error messages with total size greater than `1MB`, they are trucated.
+
+The sizes and grouping mechanics are internal performance details and are subject to change in future versions.
+
+Executing an `ordered` list of operations on a sharded collection will generally be slower than executing an `unordered` list since with an ordered list, each operation must wait for the previous operation to finish.
+
+##### **Collection Creation**
+If the collection does not exist, then `InsertMany()` creates the collection on successful write.
+###### **`_id` Field**
+If the document does not specify an `_id` field, then `mongod` adds the `_id` field and assign a unique `ObjectId()` for the document. Most drivers create an ObjectId and insert the `_id` field, but the mongod will create and populate the `_id` if the driver or application does not.
+
+If the document contains an `_id` field, the `_id` value must be unique within the collection to avoid duplicate key error.
+##### **Error Handling**
+Inserts throw a `BulkWriteError` exception.
+
+Excluding write concern errors, ordered operations stop after an error, while unordered operations continue to process any remaining write operations in the queue.
+
+Write concern errors are displayed in the `writeConcernErrors` field, while all other errors are displayed in the `writeErrors` field. If an error is encountered, the number of successful write operations are displayed instead of a list of inserted _ids. Ordered operations display the single error encountered while unordered operations display each error in an array.
+
+## Examples
+The following examples insert documents into the `products` collection.
+
+##### **Insert Several Document without Specifying an `_id` Field**
+The following example uses `InsertMany()` to insert documents that do not contain the `_id` field:
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "products",
+      documents = {
+         { item = "card", qty = 15 },
+         { item = "envelope", qty = 20 },
+         { item = "stamps" , qty = 30 }
+      }
+   }
+)
+```
+The operation returns the following document:
+```json
+{
+   "acknowledged" : true,
+   "insertedIds" : [
+      ObjectId("562a94d381cb9f1cd6eb0e1a"),
+      ObjectId("562a94d381cb9f1cd6eb0e1b"),
+      ObjectId("562a94d381cb9f1cd6eb0e1c")
+   ]
+}
+```
+
+Because the documents did not include `_id`, mongod creates and adds the `_id` field for each document and assigns it a unique ObjectId() value.
+
+The `ObjectId` values are specific to the machine and time when the operation is run. As such, your values may differ from those in the example.
+
+##### **Insert Several Document Specifying an _id Field**
+The following example/operation uses `InsertMany()` to insert documents that include the `_id` field. The value of `_id` must be unique within the collection to avoid a duplicate key error.
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "products",
+      documents = {
+         { _id = 10, item = "box", qty = 20 },
+         { _id = 11, item = "pencil", qty = 50 },
+         { _id = 12, item = "eraser", qty = 25 }
+      }
+   }
+)
+```
+The operation returns the following document:
+```json
+{ "acknowledged" : true, "insertedIds" : [ 10, 11, 12 ] }
+```
+Inserting a duplicate value for any key that is part of a unique index, such as `_id`, throws an exception. The following attempts to insert a document with a `_id` value that already exists:
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "products",
+      documents = {
+         { _id = 13, item = "box", qty = 20 },
+         { _id = 13, item = "pencil", qty = 50 },
+         { _id = 14, item = "eraser", qty = 25 }
+      }
+   }
+)
+```
+Since _id: 13 already exists, the following exception is thrown:
+```json
+BulkWriteError({
+   "writeErrors" : [
+      {
+         "index" : 0,
+         "code" : 11000,
+         "errmsg" : "E11000 duplicate key error collection: inventory.products index: _id_ dup key: { : 13.0 }",
+         "op" : {
+            "_id" : 13,
+            "item" : "stamps",
+            "qty" : 110
+         }
+      }
+   ],
+   "writeConcernErrors" : [ ],
+   "nInserted" : 1,
+   "nUpserted" : 0,
+   "nMatched" : 0,
+   "nModified" : 0,
+   "nRemoved" : 0,
+   "upserted" : [ ]
+})
+```
+
+Note that one document was inserted: The first document of `_id: 13` will insert successfully, but the second insert will fail. This will also stop additional documents left in the queue from being inserted.
+
+With `ordered` to `false`, the insert operation would continue with any remaining documents.
+
+##### **Unordered Inserts**
+The following attempts to insert multiple documents with `_id` field and `ordered: false`. The array of documents contains two documents with duplicate `_id` fields.
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "products",
+      documents = {
+         { _id = 10, item = "large box", qty = 20 },
+         { _id = 11, item = "small box", qty = 55 },
+         { _id = 11, item = "medium box", qty = 30 },
+         { _id = 12, item = "envelope", qty = 100},
+         { _id = 13, item = "stamps", qty = 125 },
+         { _id = 13, item = "tape", qty = 20},
+         { _id = 14, item = "bubble wrap", qty = 30}
+      },
+      options = {
+         ordered = false
+      }
+   }
+)
+```
+The operation throws the following exception:
+```json
+BulkWriteError({
+   "writeErrors" : [
+      {
+         "index" : 2,
+         "code" : 11000,
+         "errmsg" : "E11000 duplicate key error collection: inventory.products index: _id_ dup key: { : 11.0 }",
+         "op" : {
+            "_id" : 11,
+            "item" : "medium box",
+            "qty" : 30
+         }
+      },
+      {
+         "index" : 5,
+         "code" : 11000,
+         "errmsg" : "E11000 duplicate key error collection: inventory.products index: _id_ dup key: { : 13.0 }",
+         "op" : {
+            "_id" : 13,
+            "item" : "tape",
+            "qty" : 20
+         }
+      }
+   ],
+   "writeConcernErrors" : [ ],
+   "nInserted" : 5,
+   "nUpserted" : 0,
+   "nMatched" : 0,
+   "nModified" : 0,
+   "nRemoved" : 0,
+   "upserted" : [ ]
+})
+```
+While the document with item: "medium box" and item: "tape" failed to insert due to duplicate _id values, nInserted shows that the remaining 5 documents were inserted.
+
+##### **Write Concern**
+Given a three member replica set, the following operation specifies a `w `of `majority` and `wtimeout` of `100`:
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "products",
+      documents = {
+         { _id = 10, item = "large box", qty = 20 },
+         { _id = 11, item = "small box", qty = 55 },
+         { _id = 12, item = "medium box", qty = 30 }
+      },
+      options = {
+         writeConcern = {
+            w = "majority",
+            wtimeout = 100
+         }
+      }
+   }
+)
+```
+If the primary and at least one secondary acknowledge each write operation within 100 milliseconds, it returns:
+```json
+{
+  "acknowledged" : true,
+  "insertedIds" : [
+     ObjectId("562a94d381cb9f1cd6eb0e1a"),
+     ObjectId("562a94d381cb9f1cd6eb0e1b"),
+     ObjectId("562a94d381cb9f1cd6eb0e1c")
+  ]
+}
+```
+If the total time required for all required nodes in the replica set to acknowledge the write operation is greater than `wtimeout`, the following `writeConcernError` is displayed when the `wtimeout` period has passed.
+
+This operation returns:
+```json
+WriteConcernError({
+   "code" : 64,
+   "errmsg" : "waiting for replication timed out",
+   "errInfo" : {
+     "wtimeout" : true,
+     "writeConcern" : {    // Added in MongoDB 4.4
+       "w" : "majority",
+       "wtimeout" : 100,
+       "provenance" : "getLastErrorDefaults"
+     }
+   }
+})
+```

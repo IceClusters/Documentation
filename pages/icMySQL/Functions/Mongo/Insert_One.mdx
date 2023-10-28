@@ -1,0 +1,107 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# InsertOne
+
+## Definition
+Inserts a single document into a collection.
+
+**Returns:** A document containing:
+- A boolean `acknowledged` as true if the operation ran with write concern or `false` if write concern was disabled.
+- A field `insertedId` with the `_id` value of the inserted document.
+
+## Compatibility
+You can use InsertOne() for deployments hosted in the following environments:
+- MongoDB Atlas: The fully managed service for MongoDB deployments in the cloud
+
+- MongoDB Enterprise: The subscription-based, self-managed version of MongoDB
+
+- MongoDB Community: The source-available, free-to-use, and self-managed version of MongoDB
+
+## Sintax
+The `InsertOne()` method has the following form:
+```lua
+exports["icmysql"]:MongoInsertOne(
+   {
+      collection = "<collection>",
+      document = <document>,
+      options = <options>
+   }
+)
+```
+The `InsertOne()` method takes the following parameters:
+- `<collection>`: The name of the collection to insert the document into.
+- `<document>`: A document to insert into the collection.
+- `<options>`: Optional. A document expressing the write concern. Omit to use the default write concern.
+
+## Behaviours
+##### **Collection Creation**
+If the collection does not exist, then the `InsertOne()` method creates the collection.
+
+##### **`_id` Field**
+If the document does not specify an _id field, then mongod will add the _id field and assign a unique ObjectId() for the document before inserting. Most drivers create an ObjectId and insert the _id field, but the mongod will create and populate the _id if the driver or application does not.
+
+If the document contains an _id field, the _id value must be unique within the collection to avoid duplicate key error.
+
+## Examples
+##### **Insert a Document without Specifying an _id Field**
+In the following example, the document passed to the `InsertOne()` method does not contain the _id field:
+```lua
+exports["icmysql"]:MongoInsertOne( { collection = "myTable", document = {item = "card", qty = 15 }} );
+```
+The operation returns the following document:
+```json
+{
+   "acknowledged" : true,
+   "insertedId" : ObjectId("56fc40f9d735c28df206d078")
+}
+```
+Because the documents did not include `_id`, `mongod` creates and adds the _id field and assigns it a unique `ObjectId()` value.
+The `ObjectId` values are specific to the machine and time when the operation is run. As such, your values may differ from those in the example.
+
+##### **Insert a Document Specifying an `_id` Field**
+In the following example, the document passed to the `InsertOne()` method includes the `_id` field. The value of `_id` must be unique within the collection to avoid duplicate key error.
+```lua
+exports["icmysql"]:MongoInsertOne( { collection = "myTable", document = { _id = 1, item = "card", qty = 15 }} );
+```
+The operation returns the following:
+```json
+{ "acknowledged" : true, "insertedId" : 10 }
+```
+Inserting an duplicate value for any key that is part of a unique index, such as `_id`, throws an exception. The following attempts to insert a document with a `_id` value that already exists:
+```lua
+exports["icmysql"]:MongoInsertOne( { collection = "myTable", document = { _id = 1, item = "card", qty = 15 }} );
+```
+Since `_id`: 10 already exists, the following exception is thrown:
+```json
+WriteError({
+   "index" : 0,
+   "code" : 11000,
+   "errmsg" : "E11000 duplicate key error collection: inventory.products index: _id_ dup key: { : 10.0 }",
+   "op" : {
+      "_id" : 10,
+      "item" : "packing peanuts",
+      "qty" : 200
+   }
+})
+```
+
+##### **Increase Write Concern**
+Given a three member replica set, the following operation specifies a `w `of `majority`, `wtimeout` of `100`:
+```lua
+exports["icmysql"]:MongoInsertOne( { collection = "myTable", document = { "item": "envelopes", "qty": 100, type: "Self-Sealing" }, options = { w = "majority", wtimeout = 100 } } );
+```
+If the acknowledgement takes longer than the wtimeout limit, the following exception is thrown:
+```json
+WriteConcernError({
+   "code" : 64,
+   "errmsg" : "waiting for replication timed out",
+   "errInfo" : {
+     "wtimeout" : true,
+     "writeConcern" : {    // Added in MongoDB 4.4
+       "w" : "majority",
+       "wtimeout" : 100,
+       "provenance" : "getLastErrorDefaults"
+     }
+   }
+})
+```

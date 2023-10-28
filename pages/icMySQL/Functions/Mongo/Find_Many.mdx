@@ -1,0 +1,503 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# FindMany
+
+## Definition
+Selects documents in a collection or view and returns a cursor to the selected documents.
+
+**Returns:** A document containing:
+- A cursor to the documents that match the query criteria. When the `FindMany()` method "returns documents," the method is actually returning a cursor to the documents.
+
+## Compatibility
+You can use FindMany() for deployments hosted in the following environments:
+- MongoDB Atlas: The fully managed service for MongoDB deployments in the cloud
+
+- MongoDB Enterprise: The subscription-based, self-managed version of MongoDB
+
+- MongoDB Community: The source-available, free-to-use, and self-managed version of MongoDB
+
+## Sintax
+The `FindMany()` method has the following form:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "<collection>",
+      query = <query>,
+      options = <options>
+   }
+)
+```
+The `FindMany()` method takes the following parameters:
+- `<collection>`: The name of the collection to insert the document into.
+- `<query>`: A document that specifies the query conditions. The query syntax is identical to the read operation query syntax; i.e. `Find()`.
+- `<options>`: Optional. A document expressing the write concern. Omit to use the default write concern.
+
+## Examples
+The examples in this section use documents from the bios collection where the documents generally have the form:
+```json
+{
+    "_id" : <value>,
+    "name" : { "first" : <string>, "last" : <string> },       // embedded document
+    "birth" : <ISODate>,
+    "death" : <ISODate>,
+    "contribs" : [ <string>, ... ],                           // Array of Strings
+    "awards" : [
+        { "award" : <string>, year: <number>, by: <string> }  // Array of embedded documents
+        ...
+    ]
+}
+```
+
+To create and populate the `bios` collection, see bios collection.
+
+##### **Find All Documents in a Collection**
+The `FindMany()` method with no parameters returns all documents from a collection and returns all fields for the documents. For example, the following operation returns all documents in the bios collection:
+```lua
+exports["icmysql"]:MongoFindMany({collection = "bios"})
+```
+
+##### **Find Documents that Match Query Criteria**
+###### Query for Equality
+- The following operation returns documents in the bios collection where `_id` equals `5`:
+```lua
+exports["icmysql"]:MongoFindMany({collection = "bios", query = {_id = 5}})
+```
+- The following operation returns documents in the bios collection where the field `last` in the `name` embedded document equals `"Hopper"`:
+```lua
+exports["icmysql"]:MongoFindMany({collection = "bios", query = {"name.last" = "Hopper"}})
+```
+
+###### Query Using Operators
+To find documents that match a set of selection criteria, call `FindMany()` with the `<criteria>` parameter.
+
+MongoDB provides various query operators to specify the criteria.
+- The following operation uses the `$in` operator to return documents in the bios collection where `_id` equals either `5` or `ObjectId("507c35dd8fada716c89d0013")`:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         _id = {
+            $in = {
+               5,
+               ObjectId("507c35dd8fada716c89d0013")
+            }
+         }
+      }
+   }
+)
+```
+- The following operation uses the `$gt` operator returns all the documents from the `bios` collection where `birth` is greater than `new Date('1950-01-01')`:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         birth = {
+            $gt = new Date('1950-01-01')
+         }
+      }
+   }
+)
+```
+- The following operation uses the `$regex` operator to return documents in the bios collection where `name.last` field starts with the letter `N` (or is `"LIKE N%"`)
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         "name.last" = {
+            $regex = "^N"
+         }
+      }
+   }
+)
+```
+For a list of the query operators, see Query Selectors.
+
+###### Query for Ranges
+Combine comparison operators to specify ranges for a field. The following operation returns from the bios collection documents where `birth` is between `new Date('1940-01-01')` and `new Date('1960-01-01')` (exclusive):
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         birth = {
+            $gt = new Date('1940-01-01'),
+            $lt = new Date('1960-01-01')
+         }
+      }
+   }
+)
+```
+For a list of the query operators, see Query Selectors.
+
+###### Query for Multiple Conditions
+The following operation returns all the documents from the bios collection where `birth` field is `greater than` `new Date('1950-01-01')` and `death` field does not exists:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         birth = {
+            ["$gt"] = new Date('1950-01-01')
+         },
+         death = {
+            ["$exists"] = false
+         }
+      }
+   }
+)
+```
+For a list of the query operators, see Query Selectors.
+
+##### **Query Embedded Documents**
+The following examples query the name embedded field in the bios collection.
+
+###### Query Exact Matches on Embedded Documents
+The following operation returns documents in the bios collection where the embedded document name is exactly `{ first: "Yukihiro", last: "Matsumoto" }`, including the order:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         name = {
+            first = "Yukihiro",
+            last = "Matsumoto"
+         }
+      }
+   }
+)
+```
+The `name` field must match the embedded document exactly. The query does not match documents with the following `name` fields:
+```json
+{
+   first: "Yukihiro",
+   aka: "Matz",
+   last: "Matsumoto"
+}
+
+{
+   last: "Matsumoto",
+   first: "Yukihiro"
+}
+```
+
+###### Query Fields of an Embedded Document
+The following operation returns documents in the bios collection where the embedded document name contains a field `first` with the value `"Yukihiro"` and a field `last` with the value `"Matsumoto"`. The query uses dot notation to access fields in an embedded document:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         "name.first" = "Yukihiro",
+         "name.last" = "Matsumoto"
+      }
+   }
+)
+```
+The query matches the document where the name field contains an embedded document with the field first with the value "Yukihiro" and a field last with the value "Matsumoto". For instance, the query would match documents with name fields that held either of the following values:
+```json
+{
+  first: "Yukihiro",
+  aka: "Matz",
+  last: "Matsumoto"
+}
+
+{
+  last: "Matsumoto",
+  first: "Yukihiro"
+}
+```
+
+##### **Query Arrays**
+###### Query for an Array Element
+The following examples query the `contribs` array in the bios collection.
+- The following operation returns documents in the bios collection where the array field contribs contains the element `"UNIX"`:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         contribs = "UNIX"
+      }
+   }
+)
+```
+- The following operation returns documents in the bios collection where the array field `contribs` contains the element `"ALGOL"` or `"Lisp"`:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         contribs = {
+            $in = {
+               "ALGOL",
+               "Lisp"
+            }
+         }
+      }
+   }
+)
+```
+- The following operation use the `$all` query operator to return documents in the bios collection where the array field `contribs` contains both the elements `"ALGOL"` and `"Lisp"`:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         contribs = {
+            $all = {
+               "ALGOL",
+               "Lisp"
+            }
+         }
+      }
+   }
+)
+```
+- The following operation uses the `$size` operator to return documents in the bios collection where the array size of `contribs` is 4:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         contribs = {
+            $size = 4
+         }
+      }
+   }
+)
+```
+
+###### Query an Array of Documents
+The following examples query the `awards` array in the bios collection.
+The following operation returns documents in the bios collection where the awards array contains an element with `award` field equals `"Turing Award"`:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         "awards.award" = "Turing Award"
+      }
+   }
+)
+```
+- The following operation returns documents in the bios collection where the `awards` array contains at least one element with both the `award` field equals `"Turing Award"` and the `year` field greater than 1980:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         awards = { 
+            ["$elemMatch"] = {
+               award = "Turing Award",
+               year = { $gt: 1980 }
+            }
+         }
+      }
+   }
+)
+```
+Use the `$elemMatch` operator to specify multiple criteria on an array element.
+
+
+##### **Projections**
+The `projection` parameter specifies which fields to return. The parameter contains either include or exclude specifications, not both, unless the exclude is for the `_id` field.
+
+###### Specify the Fields to Return
+The following operation finds all documents in the bios collection and returns only the `name` field, `contribs` field and `_id` field:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {},
+      options = {
+         projection = {
+            name = 1,
+            contribs = 1
+         }
+      }
+   }
+)
+```
+
+###### Explicitly Excluded Fields
+The following operation queries the bios collection and returns all fields except the `first` field in the `name` embedded document and the `birth` field:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {
+         contribs = "OOP
+      },
+      options = {
+         projection = {
+            ["name.first"] = 0,
+            birth = 0
+         }
+      }
+   }
+)
+```
+
+###### Explicitly Exclude the `_id` Field
+The following operation finds documents in the bios collection and returns only the `name` field and the `contribs` field:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {},
+      options = {
+         projection = {
+            _id = 0,
+            name = 1,
+            contribs = 1
+         }
+      }
+   }
+)
+```
+
+###### On Arrays and Embedded Documents
+The following operation queries the bios collection and returns the `last` field in the `name` embedded document and the first two elements in the `contribs` array:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {},
+      options = {
+         projection = {
+            ["$id"] = 0,
+            "name.last" = 1,
+            contribs = {
+               ["$slice"] = 2
+            }
+         }
+      }
+   }
+)
+```
+Starting in MongoDB 4.4, you can also specify embedded fields using the nested form, for example:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {},
+      options = {
+         projection = {
+            _id = 0,
+            name = {
+               last = 1
+            },
+            contribs = {
+               ["$slice"] = 2
+            }
+         }
+      }
+   }
+)
+```
+
+###### Use Aggregation Expression
+Starting in MongoDB 4.4, `FindMany()` projection can accept aggregation expressions and syntax.
+
+With the use of aggregation expressions and syntax, you can project new fields or project existing fields with new values. For example, the following operation uses aggregation expressions to override the value of the `name` and `awards` fields as well as to include new fields `reportDate`, `reportBy`, and `reportNumber`.
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "bios",
+      query = {},
+      options = {
+         projection = {
+            _id = 0,
+            name = {
+               ["$concat"] = {
+                  ["$ifNull"] = { "$name.aka", "$name.first },
+                  " ",
+                  "$name.last
+               }
+            },
+            birth = 1,
+            contribs = 1,
+            awards = {
+               ["$cond"] = {
+                  if = {
+                     "$isArray" = "$awards",
+                     then = { "$size" = "$awards" },
+                     else = 0
+                  }
+               }
+            },
+            reportDate = {
+               ["$dateToString"] = {
+                  format = "%Y-%m-%d",
+                  date = "$$NOW"
+               }
+            },
+            reportBy = "hellouser123",
+            reportNumber = {
+               ["$literal"] = 1
+            }
+         }
+      }
+   }
+)
+```
+To set the `reportRun` field to the value `1` The operation returns the following documents:
+```json
+{ "birth" : ISODate("1924-12-03T05:00:00Z"), "contribs" : [ "Fortran", "ALGOL", "Backus-Naur Form", "FP" ], "name" : "John Backus", "awards" : 4, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1927-09-04T04:00:00Z"), "contribs" : [ "Lisp", "Artificial Intelligence", "ALGOL" ], "name" : "John McCarthy", "awards" : 3, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1906-12-09T05:00:00Z"), "contribs" : [ "UNIVAC", "compiler", "FLOW-MATIC", "COBOL" ], "name" : "Grace Hopper", "awards" : 4, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1926-08-27T04:00:00Z"), "contribs" : [ "OOP", "Simula" ], "name" : "Kristen Nygaard", "awards" : 3, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1931-10-12T04:00:00Z"), "contribs" : [ "OOP", "Simula" ], "name" : "Ole-Johan Dahl", "awards" : 3, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1956-01-31T05:00:00Z"), "contribs" : [ "Python" ], "name" : "Guido van Rossum", "awards" : 2, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1941-09-09T04:00:00Z"), "contribs" : [ "UNIX", "C" ], "name" : "Dennis Ritchie", "awards" : 3, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1965-04-14T04:00:00Z"), "contribs" : [ "Ruby" ], "name" : "Matz Matsumoto", "awards" : 1, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "birth" : ISODate("1955-05-19T04:00:00Z"), "contribs" : [ "Java" ], "name" : "James Gosling", "awards" : 2, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+{ "contribs" : [ "Scala" ], "name" : "Martin Odersky", "awards" : 0, "reportDate" : "2020-06-05", "reportBy" : "hellouser123", "reportNumber" : 1 }
+```
+
+##### **Use Variables in `let` Option**
+You can specify query options to modify query behavior and indicate how results are returned.
+
+For example, to define variables that you can access elsewhere in the `find` method, use the let option. To filter results using a variable, you must access the variable within the `$expr` operator.
+
+Create a collection `cakeFlavors`:
+```lua
+exports["icmysql"]:MongoInsertMany(
+   {
+      collection = "cakeFlavors",
+      documents = {
+         { _id = 1, flavor = "chocolate" },
+         { _id = 2, flavor = "strawberry" },
+         { _id = 3, flavor = "cherry" }
+      }
+   }
+)
+```
+The following example defines a `targetFlavor` variable in `let` and uses the variable to retrieve the chocolate cake flavor:
+```lua
+exports["icmysql"]:MongoFindMany(
+   {
+      collection = "cakeFlavors",
+      query = {
+         ["$expr"] = {
+            ["$eq"] = [ "$flavor", "$$targetFlavor" ]
+         }
+      },
+      options = {
+         projection = {
+            _id = 0
+         },
+         let = {
+            targetFlavor = "chocolate"
+         }
+      }
+   }
+)
+```
+Output:
+```json
+[ { flavor: 'chocolate' } ]
+```
