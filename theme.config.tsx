@@ -54,7 +54,7 @@ const config: DocsThemeConfig = {
     link: 'https://github.com/iceclusters/documentation',
   },
   chat: {
-    link: 'https://discord.icclusters.github.io',
+    link: 'https://discord.gg/7DGjXGUkqb',
   },
   docsRepositoryBase: 'https://github.com/iceclusters/Documentation/blob/main',
   footer: {

@@ -187,9 +187,9 @@ footer{
   @apply dark:border-neutral-800 dark:bg-neutral-600 dark:hover:bg-neutral-500;
 }
 
-.nextra-code-block pre {
+/* .nextra-code-block pre {
   @apply dark:!bg-zinc-800;
-}
+} */
 
 .btn--style{
   /* border-radius: 3px; */
