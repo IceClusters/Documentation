@@ -20,6 +20,8 @@ function useHead() {
       <meta name="og:title" content={title} />
       <meta name="og:description" content={description} />
       <link rel="icon" href={iconico} id="__link-icon"></link>
+      <link rel="apple-touch-icon" href={iconico}></link>
+      <link rel="preload" as="image" href={iconico}></link>
     </>
   );
 }
