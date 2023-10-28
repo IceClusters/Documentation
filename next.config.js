@@ -3,6 +3,7 @@ const withNextra = require('nextra')({
 	themeConfig: './theme.config.tsx',
 })
 
+
 const isProduction = process.env.NODE_ENV === "production";
 const assetPrefix = isProduction ? "/introduction" : "";
 module.exports = {
