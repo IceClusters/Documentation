@@ -19,6 +19,7 @@ function useHead() {
       <meta name="description" content={description} />
       <meta name="og:title" content={title} />
       <meta name="og:description" content={description} />
+      <link rel="icon" href={iconico} id="__link-icon"></link>
     </>
   );
 }
