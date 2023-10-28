@@ -17,11 +17,6 @@ function useHead() {
       <meta name="description" content={description} />
       <meta name="og:title" content={title} />
       <meta name="og:description" content={description} />
-      <meta name="og:url" content={url} />
-
-      <div className="kuma-1497335934">
-        <div className="kuma-3622173640"></div>
-      </div>
     </>
   );
 }
