@@ -1,37 +1,31 @@
 {
-	"name": "Ice Documentation",
-	"version": "0.0.1",
-	"description": "Documentation for icDoc",
-	"homepage": "https://iceclusters.github.io/documentation",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/shuding/nextra-docs-template.git"
-	},
-	"author": "KDex",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/shuding/nextra-docs-template/issues"
-	},
-	"dependencies": {
-		"@tabler/icons-react": "^2.40.0",
-		"next": "^14.0.0",
-		"nextra": "^2.13.2",
-		"nextra-theme-docs": "^2.13.2",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
-	},
-	"scripts": {
-		"dev": "next",
-		"build": "next build",
-		"start": "next start",
-		"postbuild": "next-sitemap"
-	},
-	"devDependencies": {
-		"@types/node": "^20.8.9",
-		"autoprefixer": "^10.4.16",
-		"postcss": "^8.4.31",
-		"prettier-plugin-tailwindcss": "^0.5.6",
-		"tailwindcss": "^3.3.5",
-		"typescript": "^5.2.2"
-	}
+  "name": "nextra-docs-template",
+  "version": "0.0.1",
+  "description": "Nextra docs template",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shuding/nextra-docs-template.git"
+  },
+  "author": "Shu Ding <g@shud.in>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shuding/nextra-docs-template/issues"
+  },
+  "homepage": "https://github.com/shuding/nextra-docs-template#readme",
+  "dependencies": {
+    "next": "^13.0.6",
+    "nextra": "latest",
+    "nextra-theme-docs": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.10",
+    "typescript": "^4.9.3"
+  }
 }
