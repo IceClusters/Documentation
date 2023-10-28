@@ -24,6 +24,7 @@ function useHead() {
       <link rel="preload" as="image" href={iconico}></link>
       <meta property="og:image" content={iconico} />
       <meta property="og:image:alt" content="Ice Cluster" />
+      <meta property="og:image:type" content="image/x-icon" />
       <meta property="og:image:width" content="256" />
       <meta property="og:image:height" content="256"></meta>
     </>
