@@ -19,7 +19,7 @@ In order for the resource to start correctly and not receive any errors, we must
 ```cfg {3} showLineNumbers filename="server.cfg"
 ensure core
 ...
-ensure ic_trophies
+ensure ictrophies
 ```
 
 ### Setting Up the Trophies Database
@@ -30,7 +30,7 @@ To set up the trophies table in your database, execute the provided SQL command.
 
 </Callout>
 
-```sql {1-10} showLineNumbers filename="ic_trophies.sql"
+```sql {1-10} showLineNumbers filename="ictrophies.sql"
 CREATE TABLE IF NOT EXISTS `players_trophies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `license` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -161,7 +161,7 @@ Config.Trophies = {
 
 To make changes to certain translations, you can edit the index.html file.
 
-File Location: ```ic_trophies\src\ui\index.html```
+File Location: ```ictrophies\src\ui\index.html```
 
 <Callout type="info">
 

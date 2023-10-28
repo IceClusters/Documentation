@@ -54,27 +54,55 @@ This document will guide you step by step on how to add new trophies or achievem
 
     #### Use the Function
 
-    ```exports["ic_trophies"]:NewTrophy(trophyName)```, is what you'll use to award the trophy. Replace  trophyName with the name of the trophy you want to award.
+    ```exports["ictrophies"]:NewTrophy(trophyName)```, is what you'll use to award the trophy. Replace  trophyName with the name of the trophy you want to award.
 
     For instance, to award the "First Travel" trophy, you'd use:
 
-    ```lua showLineNumbers filename="example"
-    exports["ic_trophies"]:NewTrophy("travel")
-    ```
+    <Tabs items={["Client Side", "Server Side"]}>
+        <Tab>
+            ```lua showLineNumbers filename="client.lua"
+                exports["ictrophies"]:NewTrophy("travel")
+            ```
+        </Tab>
+        
+        <Tab>
+            ```lua showLineNumbers filename="server.lua"
+                exports["ictrophies"]:NewTrophy(playerId, "travel")
+            ```
+        </Tab>
+    </Tabs>
 
     #### Implement in Your Script: 
     Place the export function at the relevant point in your script. For example, in the provided sample:
 
-    ```lua showLineNumbers filename="example"
-    Play.Shared = function(shared, p)
-        -- ... other code ...
 
-        -- This is where a trophy is awarded for sharing an animation.
-        exports["ice_trophies"]:NewTrophy("animation")
+    <Tabs items={["Client Side", "Server Side"]}>
+        <Tab>
+            ```lua showLineNumbers filename="client.lua"
+            Play.Shared = function(shared, p)
+                -- ... other code ...
+
+                -- This is where a trophy is awarded for sharing an animation.
+                exports["ictrophies"]:NewTrophy("animation")
+                
+                -- ... other code ...
+            end
+            ```
+        </Tab>
         
-        -- ... other code ...
-    end
-    ```
+        <Tab>
+            ```lua showLineNumbers filename="server.lua"
+            Play.sendRequestAnim = function(playerid, shared)
+                -- ... other code ...
+
+                -- This is where a trophy is awarded for sharing an animation.
+                exports["ictrophies"]:NewTrophy(playerid, "animation")
+                
+                -- ... other code ...
+            end
+            ```
+        </Tab>
+    </Tabs>
 
 </Steps>
 
