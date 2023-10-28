@@ -6,7 +6,7 @@ import { IconFolder, IconFile} from '@tabler/icons-react';
 function useHead() {
   const { asPath } = useRouter();
   const { frontMatter, title } = useConfig();
-  const url = `https://iceclusters.github.io/docs/${asPath}`;
+  const url = `https://iceclusters.github.io/docs${asPath}`;
   const description = frontMatter.description || "Documentation for Ice Cluster resources";
 
   return (
