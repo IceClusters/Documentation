@@ -18,6 +18,7 @@ export default {
   darkMode: true,
 
   // ...
+  basePath: "/docs",
 
   sidebar: {
     toggleButton: true,
