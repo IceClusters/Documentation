@@ -22,7 +22,7 @@ function useHead() {
       <link rel="icon" href={iconico} id="__link-icon"></link>
       <link rel="apple-touch-icon" href={iconico}></link>
       <link rel="preload" as="image" href={iconico}></link>
-      <meta property="og:image" content="https://media.discordapp.net/attachments/1004681367214370877/1167820424290242620/iceGradientBg.jpg?ex=654f8486&is=653d0f86&hm=05d47e260b3d8e8c25127df27be072c7fdca2daed1f0cdbdcc2c76f84025e194&=" />
+      <meta property="og:image" content="https://media.discordapp.net/attachments/1004681367214370877/1167820424290242620/iceGradientBg.jpg" />
       <meta property="og:image:alt" content="Ice Cluster" />
       <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="256" />
