@@ -6,13 +6,15 @@ import { IconFolder, IconFile} from '@tabler/icons-react';
 function useHead() {
   const { asPath } = useRouter();
   const { frontMatter, title } = useConfig();
+  const iconico = "https://iceclusters.github.io/docs/static/ice-icon.ico";
+  
   const url = `https://iceclusters.github.io/docs${asPath}`;
   const description = frontMatter.description || "Documentation for Ice Cluster resources";
 
   return (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="icon" type="image/x-icon" href="/static/ice-icon.ico" />
+      <link rel="icon" type="image/x-icon" href={iconico} />
       <meta httpEquiv="Content-Language" content="en" />
       <meta name="description" content={description} />
       <meta name="og:title" content={title} />
