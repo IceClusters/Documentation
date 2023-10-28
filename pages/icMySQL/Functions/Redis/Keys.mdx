@@ -1,0 +1,73 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# Keys
+The keys functions are used to manage the keys in the redis database.
+
+## Params
+- Pattern(*) is the pattern that will be used to find the keys.
+- Function(OPTIONAL) is the function that will be executed when the query is finished.
+
+## Return
+If you've specified a function it will return the result of the query in the function, if not it will return the result of the query.
+
+## Functions
+<Tabs items={["Exports", "Library"]}>
+<Tab>
+```lua
+exports["ice_mysql"]:RedisKeys(pattern, function)
+```
+</Tab>
+<Tab>
+```lua
+MySQL.Redis.RedisKeys(pattern, function)
+```
+</Tab>
+</Tabs>
+
+## Use
+### Awaitable
+<Tabs items={["Lua", "JS", "C#"]}>
+<Tab>
+```lua
+local result = MySQL.Redis.RedisKeys("*name*")
+```
+</Tab>
+<Tab>
+```js
+const result = await MySQL.Redis.RedisKeys("*name*")
+```
+</Tab>
+<Tab>
+```cs
+var result = await MySQL.Redis.RedisKeys("*name*")
+```
+</Tab>
+</Tabs>
+
+### Callback
+- Callback will return the same as the awaitable function but in the callback function.
+- If the callback is not provided it will return the same as the awaitable function.
+- If you want to make the query to execute in the main thread you have to specify a simple function like this: `() => {}` to do anything depending on the language.
+<Tabs items={["Lua", "JS", "C#"]}>
+<Tab>
+```lua
+MySQL.Redis.RedisKeys("*name*", function(result)
+    print(result)
+end)
+```
+</Tab>
+<Tab>
+```js
+MySQL.Redis.RedisKeys("*name*", (result) => {
+    console.log(result)
+})
+```
+</Tab>
+<Tab>
+```cs
+MySQL.Redis.RedisKeys("*name*", (result) => {
+    Console.WriteLine(result)
+})
+```
+</Tab>
+</Tabs>

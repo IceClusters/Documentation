@@ -1,0 +1,90 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# Update
+The update function is to replace data in the specified table of the database.
+
+## Params
+- Database ID (OPTIONAL) is to specify for what database is the query to. By default it take DB#1 you can change the default DB in the config.js.
+- Params(*) the query to execute.
+- Function(*) is the function that will be executed when the query is finished.
+
+## Return
+The mongo functions never return any value, always execute the provided callback
+
+## Functions
+<Tabs items={["Exports", "Library"]}>
+<Tab>
+```lua
+exports["ice_mysql"]:MongoUpdate(database, params, function)
+```
+</Tab>
+<Tab>
+```lua
+MySQL.MongoUpdate(database, params, function)
+```
+</Tab>
+</Tabs>
+
+## Use
+- If you want to make the query to execute in the main thread you have to specify a simple function like this: `() => {}` to do anything depending on the language.
+<Tabs items={["Lua", "JS", "C#"]}>
+<Tab>
+```lua
+MySQL.Mongo.MongoUpdate(1, {
+    collection = "users",
+    query = {
+        ["name"] = "kDex"
+    },
+    update = {
+        ["$set"] = {
+            ["name"] = "kDex2"
+        }
+    },
+}, function(result)
+    print(json.encode(result));
+end);
+```
+</Tab>
+<Tab>
+```js
+MySQL.Mongo.MongoUpdate(1, {
+    collection: "users",
+    query: {
+        name: "kDex"
+    },
+    update: {
+        "$set": {
+            name: "kDex2"
+        }
+    }
+}, function(result) {
+    console.log(JSON.stringify(result));
+});
+```
+</Tab>
+<Tab>
+```cs
+Dictionary<string, object> data = new Dictionary<string, object>
+{
+    { "collection", "users" },
+    { "query", new Dictionary<string, object>
+        {
+            { "name", "kDex" }
+        }
+    },
+    { "update", new Dictionary<string, object>
+        {
+            { "$set", new Dictionary<string, object>
+                {
+                    { "name", "kDex2" }
+                }
+            }
+        }
+    }
+};
+MySQL.MongoUpdate(1, data, (result) => {
+    Console.WriteLine(result)
+})
+```
+</Tab>
+</Tabs>

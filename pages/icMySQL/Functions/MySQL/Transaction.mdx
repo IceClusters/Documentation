@@ -1,0 +1,170 @@
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+# Transaction
+The insert function is to insert data in the specified table of the database.
+
+## Params
+- Database ID (OPTIONAL) is to specify for what database is the query to. By default it take DB#1 you can change the default DB in the config.js.
+- Query(*) the query to execute.
+- Values(OPTIONAL) the values that will be replaced in the query, these are ?, @, :, etc.
+- Function(OPTIONAL) is the function that will be executed when the query is finished.
+- Cache(OPTIONAL) is to specify if the query want to use the cache system, by default is activated this only may be disabled if there're problems with the cache system.
+
+## Return
+If you've specified a function it will return the result of the query in the function, if not it will return the result of the query.
+In this case it will return the match data.
+
+## Functions
+<Tabs items={["Exports", "Library"]}>
+<Tab>
+```lua
+exports["ice_mysql"]:Transaction(database, query, function)
+```
+```lua
+exports["ice_mysql"]:AwaitTransaction(database, query)
+```
+</Tab>
+<Tab>
+```lua
+MySQL.Transaction(database, query, function)
+```
+```lua
+MySQL.AwaitTransaction(database, query)
+```
+</Tab>
+</Tabs>
+
+## Use
+### Awaitable
+<Tabs items={["Lua", "JS", "C#"]}>
+<Tab>
+```lua
+local queries = {
+    {
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        {
+            6, "test", {}
+        }
+    },
+    {
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        {
+            7, "test2", {}
+        }
+    },
+}
+local success = exports["ice_mysql"]:AwaitTransaction(1, queries)
+print(success)
+```
+</Tab>
+<Tab>
+```js
+const queries = [
+    [
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        [
+            6, "test", {}
+        ]
+    ],
+    [
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        [
+            7, "test2", {}
+        ]
+    ],
+]
+const success = await MySQL.AwaitTransaction(1, queries)
+console.log(success)
+```
+</Tab>
+<Tab>
+```cs
+var queries = new List<List<object>>() {
+    new List<object>() {
+        "INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)",
+        new List<object>() {
+            6, "test", new List<object>()
+        }
+    },
+    new List<object>() {
+        "INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)",
+        new List<object>() {
+            7, "test2", new List<object>()
+        }
+    },
+}
+var success = await MySQL.AwaitTransaction(1, queries)
+Console.WriteLine(success)
+```
+</Tab>
+</Tabs>
+
+### Callback
+- Callback will return the same as the awaitable function but in the callback function.
+- If the callback is not provided it will return the same as the awaitable function.
+- If you want to make the query to execute in the main thread you have to specify a simple function like this: `() => {}` to do anything depending on the language.
+<Tabs items={["Lua", "JS", "C#"]}>
+<Tab>
+```lua
+local queries = {
+    {
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        {
+            6, "test", {}
+        }
+    },
+    {
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        {
+            7, "test2", {}
+        }
+    },
+}
+MySQL.Transaction(1, queries, function(success)
+    print(success)
+end)
+```
+</Tab>
+<Tab>
+```js
+const queries = [
+    [
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        [
+            6, "test", {}
+        ]
+    ],
+    [
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        [
+            7, "test2", {}
+        ]
+    ],
+]
+MySQL.Transaction(1, queries, (success) => {
+    console.log(success)
+})
+```
+</Tab>
+<Tab>
+```cs
+var queries = new List<List<object>>() {
+    new List<object>() {
+        "INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)",
+        new List<object>() {
+            6, "test", new List<object>()
+        }
+    },
+    new List<object>() {
+        "INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)",
+        new List<object>() {
+            7, "test2", new List<object>()
+        }
+    },
+}
+MySQL.Transaction(1, queries, (success) => {
+    Console.WriteLine(success)
+})
+```
+</Tab>
+</Tabs>
