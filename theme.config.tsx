@@ -22,6 +22,10 @@ function useHead() {
       <link rel="icon" href={iconico} id="__link-icon"></link>
       <link rel="apple-touch-icon" href={iconico}></link>
       <link rel="preload" as="image" href={iconico}></link>
+      <meta property="og:image" content={iconico} />
+      <meta property="og:image:alt" content="Ice Cluster" />
+      <meta property="og:image:width" content="256" />
+      <meta property="og:image:height" content="256"></meta>
     </>
   );
 }
