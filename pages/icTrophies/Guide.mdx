@@ -29,6 +29,12 @@ This document will guide you step by step on how to add new trophies or achievem
     ["travel"] = {
         ["title"] = "First Travel",
         ["description"] = "Complete your first travel in the server",
+        ["reward"] = {
+            ["enable"] = true, -- active [true] or disable [false]
+            ["type"] = "money", -- money, item
+            ["amount"] = 1000, -- amount of money or item
+            ["item"] = "bread", -- item name [if type is item only]           
+        },
         ["other"] = {
             ["type"] = 0,       -- Trophy type: 0 = easy, 1 = medium, etc.
             ["confetti"] = true, -- If you want confetti when achieved.
@@ -40,9 +46,13 @@ This document will guide you step by step on how to add new trophies or achievem
 
     - `["title"]`: The name of the trophy.
     - `["description"]`: A brief description of how the trophy is obtained.
-    - `["other"]["type"]`: The trophy type based on difficulty. It can be 0 for easy, 1 for medium, 2 for hard, and 3 for master.
-    - `["confetti"]`: If you want confetti when the trophy is achieved, set to `true`. Otherwise, `false`.
-    - `["sound"]`: If you want a notification sound when the trophy is achieved, set to `true`. Otherwise, `false`.
+    - `["reward"]["enable"]`: If you want to enable the trophy, set to `true`. Otherwise, `false`.
+    - `["reward"]["type"]`: The type of reward. It can be `money` or `item`.
+    - `["reward"]["amount"]`: The amount of money or item to be rewarded.
+    - `["reward"]["item"]`: The name of the item to be rewarded. Only used if the reward type is `item`.
+    - `["other"]["enable"]`: The trophy type based on difficulty. It can be 0 for easy, 1 for medium, 2 for hard, and 3 for master.
+    - `["other"]["confetti"]`: If you want confetti when the trophy is achieved, set to `true`. Otherwise, `false`.
+    - `["other"]["sound"]`: If you want a notification sound when the trophy is achieved, set to `true`. Otherwise, `false`.
 
     ### Troubleshoot if Needed
     
