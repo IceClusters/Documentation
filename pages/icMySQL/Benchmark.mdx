@@ -1,0 +1,50 @@
+# Benchmark
+Here we'll show the time that have took the icmysql to execute this code:
+
+## Code
+```lua filename="Benchmark.lua" copy
+local currentTime = os.nanotime()
+local results = {}
+for i = 1, 10000 do
+    local response = exports.icmysql.AwaitPrepare(1, 'SELECT citizenid FROM players WHERE id = ? LIMIT 1', {i})
+    results[i] = response
+end
+local endTime = os.nanotime()
+print('Time taken: ' .. (endTime - currentTime) .. ' nanoseconds')
+
+
+
+
+local currentTime = os.nanotime()
+local results = {}
+for i = 1, 10000 do
+    local response = exports.icmysql.AwaitInsert(1, 'INSERT INTO stashitems (stash) VALUES (?)', {
+        "["..i.."]"
+    })
+    results[i] = response
+end
+local endTime = os.nanotime()
+print('Time taken: ' .. (endTime - currentTime) .. ' nanoseconds')
+
+
+local queries = {}
+for i = 1, 10000 do
+    table.insert(queries, {
+        'INSERT INTO `trunkitems` (id, plate, items) VALUES (?, ?, ?)',
+        {
+            i, "test"..i, "[]"
+        }
+    })
+end
+local currentTime = os.nanotime()
+local success = exports["icmysql"]:AwaitTransaction(1, queries)
+local endTime = os.nanotime()
+print('Time taken: ' .. (endTime - currentTime) .. ' nanoseconds')
+```
+
+## Result
+```lua
+--Time taken: 2088627900 nanoseconds
+--Time taken: 6075055400 nanoseconds
+--Time taken: 797084100 nanoseconds
+```

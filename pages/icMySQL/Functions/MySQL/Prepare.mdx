@@ -1,7 +1,7 @@
 import { Tabs, Tab } from 'nextra-theme-docs';
 
-# Select
-The insert function is to insert data in the specified table of the database.
+# Prepare
+The prepare function is to recieve a column, row, or array of rows depending on the number of columns and rows selected.
 
 ## Params
 - Database ID (OPTIONAL) is to specify for what database is the query to. By default it take DB#1 you can change the default DB in the config.js.
@@ -18,18 +18,18 @@ In this case it will return the match data.
 <Tabs items={["Exports", "Library"]}>
 <Tab>
 ```lua
-exports["ice_mysql"]:Select(database, query, values, function, cache)
+exports["ice_mysql"]:Prepare(database, query, values, function, cache)
 ```
 ```lua
-exports["ice_mysql"]:AwaitSelect(database, query, values, function, cache)
+exports["ice_mysql"]:AwaitPrepare(database, query, values, function, cache)
 ```
 </Tab>
 <Tab>
 ```lua
-MySQL.Select(database, query, values, function, cache)
+MySQL.AwaitPrepare(database, query, values, function, cache)
 ```
 ```lua
-MySQL.AwaitSelect(database, query, values, function, cache)
+MySQL.AwaitPrepare(database, query, values, function, cache)
 ```
 </Tab>
 </Tabs>
@@ -39,21 +39,21 @@ MySQL.AwaitSelect(database, query, values, function, cache)
 <Tabs items={["Lua", "JS", "C#"]}>
 <Tab>
 ```lua
-local result = MySQL.AwaitSelect(1, "SELECT name FROM players WHERE id=@id", {
+local result = MySQL.AwaitPrepare(1, "SELECT name FROM players WHERE id=@id", {
     ["@id"] = 3
 })
 ```
 </Tab>
 <Tab>
 ```js
-const result = await MySQL.AwaitSelect(1, "SELECT name FROM players WHERE id=@id", [
+const result = await MySQL.AwaitPrepare(1, "SELECT name FROM players WHERE id=@id", [
     ["@id"] = 3
 ])
 ```
 </Tab>
 <Tab>
 ```cs
-var result = await MySQL.AwaitSelect(1, "SELECT name FROM players WHERE id=@id", new Dictionary<string, object>() {
+var result = await MySQL.AwaitPrepare(1, "SELECT name FROM players WHERE id=@id", new Dictionary<string, object>() {
     ["@id"] = 3
 })
 ```
@@ -67,7 +67,7 @@ var result = await MySQL.AwaitSelect(1, "SELECT name FROM players WHERE id=@id",
 <Tabs items={["Lua", "JS", "C#"]}>
 <Tab>
 ```lua
-MySQL.Select(1, "SELECT name FROM players WHERE id=@id", {
+MySQL.Prepare(1, "SELECT name FROM players WHERE id=@id", {
     ["@id"] = 3
 }, function(result)
     print(result)
@@ -76,7 +76,7 @@ end)
 </Tab>
 <Tab>
 ```js
-await MySQL.Select(1, "SELECT name FROM players WHERE id=@id", [
+await MySQL.Prepare(1, "SELECT name FROM players WHERE id=@id", [
     ["@id"] = 3
 ], (result) => {
     console.log(result)
@@ -85,7 +85,7 @@ await MySQL.Select(1, "SELECT name FROM players WHERE id=@id", [
 </Tab>
 <Tab>
 ```cs
-MySQL.Select(1, "SELECT name FROM players WHERE id=@id", new Dictionary<string, object>() {
+MySQL.Prepare(1, "SELECT name FROM players WHERE id=@id", new Dictionary<string, object>() {
     ["@id"] = 3
 }, (result) => {
     Console.WriteLine(result)
