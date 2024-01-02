@@ -13,7 +13,7 @@ const Contributors: React.FC<{ image: string; name: string; gitUser: string }> =
                 setContributors(function(){
                     let retval = [];
                     for(let i = 0; i < data.length; i++){
-                        if(blacklistedNames.includes(data[i].login)) continue;
+                        if(blacklistedNames.includes(data[i].login) || data[i].login == undefined) continue;
                         console.log(data[i].login)
                         retval.push({
                             name: data[i].login,
