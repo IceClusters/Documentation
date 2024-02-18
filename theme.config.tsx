@@ -7,7 +7,7 @@ function useHead() {
   const { asPath } = useRouter();
   const { frontMatter, title } = useConfig();
   const iconico = "https://iceclusters.github.io/docs/static/ice-icon.ico";
-  
+
   const url = `https://iceclusters.github.io/docs${asPath}`;
   const description = frontMatter.description || "Documentation for Ice Cluster resources";
 
@@ -59,7 +59,7 @@ const config: DocsThemeConfig = {
       Ice Cluster
     </div>
   ),
-  
+
   project: {
     link: 'https://github.com/iceclusters/documentation',
   },
@@ -86,14 +86,15 @@ const config: DocsThemeConfig = {
         '/icMySQL/Functions/Redis',
         '/icMySQL/Functions/ORM',
         '/icTrophies',
+        '/icTattooShop',
       ]);
 
       const isFolder = folderRoutes.has(route);
       const icon = isFolder ? <IconFolder /> : <IconFile />;
-      return( 
-      <> 
+      return(
+      <>
          <div className='nx-items-center nx-justify-between nx-gap-2 nx-flex nx-rounded  nx-text-sm nx-transition-colors [word-break:break-word] nx-cursor-pointer'>{icon} {title}</div>
-      
+
       </>
       )
     }

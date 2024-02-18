@@ -1,0 +1,63 @@
+---
+title: Guide
+---
+import { Steps } from 'nextra-theme-docs';
+import { Callout } from 'nextra/components';
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+## Add custom tattoos to your server
+
+To expand the selection of tattoos available on your FiveM server, you can add new designs by following these steps. Make sure you have the tattoo designs you want to add ready.
+
+<Steps>
+### Modify AddonTattoos.json
+
+First, you will need to edit the `AddonTattoos.json` file located in the `src/shared/assets/` path. This is where you will define the new tattoos you want to add.
+
+```path showLineNumbers filename="File location"
+src/shared/assets/AddonTattoos.json
+```
+
+Each entry in the `AddonTattoos.json` file must follow this format:
+
+```json {2-9} showLineNumbers filename="AddonTattoos.json"
+[
+  {
+    "collection": "nombre_de_colección",
+    "hashFemale": "identificador_del_tatuaje_para_mujeres",
+    "hashMale": "identificador_del_tatuaje_para_hombres",
+    "name": "nombre_único_del_tatuaje",
+    "price": precio_en_números,
+    "zone": "zona_del_cuerpo"
+  },
+  ...
+]
+```
+
+- collection: The name of the collection the tattoo belongs to. Use a unique identifier if you are creating a new collection.
+
+- hashFemale and hashMale: Unique identifiers for the male and female versions of the tattoo.
+
+- name: A unique name for the tattoo, used internally by the script.
+
+- price: The price of the tattoo in the game.
+
+- zone: The area of the body where the tattoo will be applied.
+
+### Add Tattoo XML Files
+
+After defining the new tattoos in the JSON file (`AddonTattoos.json`), you will need to add the tattoo XML files to the server. These files are located in the `src/modules/screenshots/xml/` path.
+
+Make sure your XML file name follows the format *_overlays.xml, where * is an identifier that matches the name of your collection in AddonTattoos.json.
+
+### Execute Command in FiveM
+
+Once you have placed the XML files in the correct location, you must run the following command on your FiveM server to generate screenshots of the custom tattoos. This is necessary for the tattoos to display correctly in the menus.
+
+```bash showLineNumbers filename="Fivem Command"
+/ screenshotTattoosCustom
+```
+
+This command will process the XML and AddonTattoos.json files and generate screenshots of the tattoos. The screenshots will be saved in the `src/nui/assets/tattoos` path automatically.
+
+</Steps>

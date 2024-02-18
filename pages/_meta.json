@@ -2,12 +2,16 @@
   "index": {
     "title": "Introduction"
   },
-  
+
   "icHud": "icHud",
   "icMySQL": {
     "title": "icMySQL"
   },
   "icTrophies": {
     "title": "icTrophies"
+  },
+  "icTattooShop": {
+    "title": "icTattooShop"
   }
+
 }

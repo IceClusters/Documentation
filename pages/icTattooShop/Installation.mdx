@@ -1,0 +1,211 @@
+---
+title: Intallation
+---
+import { Steps } from 'nextra-theme-docs';
+import { Callout } from 'nextra/components';
+import { Tabs, Tab } from 'nextra-theme-docs';
+
+## Installation
+
+<Callout type="info">
+
+It is **recommended** that one follows each step sequentially from the outset to ensure that no installation errors arise.
+
+</Callout>
+<Steps>
+### Start Order
+
+In order for the resource to start correctly and not receive any errors, we must start the resources in the following order
+
+```cfg {3} showLineNumbers filename="server.cfg"
+ensure core
+...
+ensure icTattooshop
+```
+
+### Setup Config
+
+For the script to work properly, you must change the settings in Shared to suit your needs. For example, the value of Shared.Language should be set to your preferred language, such as **en** for English or **es** for Spanish. Feel free to enable or disable debug mode by modifying Shared.Debug to true or false. In addition, you can customise the type of help notification by setting Shared.HelpNotify to **default**, **draw** or **custom** as required.
+
+```lua {3, 4, 5, 7-14} showLineNumbers filename="src/shared/shared.lua"
+Shared = {}
+
+Shared.Debug = true
+Shared.Language = "en" -- "en" or "es"
+Shared.HelpNotify = "draw" -- "default" or "draw" or "custom"
+
+Shared.Marker = {
+  Enable = true,
+  Type = 20,
+  SIZE = {x = 0.2, y = 0.2, z = 0.2},
+  RGBA = {255, 255, 255, 255},
+  BOBUPANDDOWN = true,
+  FACECAM = true,
+}
+
+
+```
+
+### Setup Translations
+
+To make modifications to specific translations, you will need to edit the corresponding file within the src/locales/translation/*.lua path. This file includes all the settings necessary to modify existing translations.
+
+File location: ```src/locales/translation/*.lua```
+
+<Callout type="info">
+
+You must edit the text on the right, the text on the left should not change.
+
+</Callout>
+```lua {1, 9} showLineNumbers filename="src/locales/translation/*.lua"
+Language["Standard"]["en"] = {
+  delete_tatto = "You have removed the tattoo with name %s",
+  draw_text_access_shop = "Access the shop",
+  help_text_access_shop = "[E] Access the shop",
+  buy_tattoo = "You have bought the tattoo with the name %s for $ %s",
+  not_enough_money = "You don't have enough money",
+}
+
+Language["Interface"]["en"] = {
+  title_shop = "Tattoo shop",
+  name_head = "Head",
+  name_torso = "Torso",
+  name_arms = "Arms",
+  name_legs = "Legs",
+  name_degraded = "Degraded",
+  select_opacity = "Select opacity",
+  buy_tattoo = "Buy",
+  cancel_tattoo = "Cancel",
+  warning_delete_msg = "Are you sure you want to remove this tattoo?",
+  text_yes = "Yes",
+  text_no = "No",
+  text_zoom = "Zoom",
+  text_up = "Move the camera upwards",
+  text_down = "Move the camera downwards",
+  text_rotate = "hold and drag to rotate the camera",
+  text_handsup = "Raise your hands",
+  text_pose = "pose",
+}
+```
+
+### Setup SQL Database
+
+To ensure that the script works correctly, you must import the SQL file into your database. This file contains all the necessary tables and data to ensure that the script works correctly.
+
+
+<Tabs items={["QBCore", "ESX"]}>
+    <Tab>
+        File location: ```_INSTALL/tattooQB.sql```
+        ```sql showLineNumbers filename="_INSTALL/tattooQB.sql"
+            ALTER TABLE `players`
+            ADD COLUMN `tattoos` longtext DEFAULT NULL;
+
+            CREATE TABLE IF NOT EXISTS `icTattooshop_business`(
+                `name` VARCHAR(60) NOT NULL,
+                `owner` varchar(60) DEFAULT NULL,
+                `money` int(11) DEFAULT NULL,
+                PRIMARY KEY (`name`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+                CREATE TABLE IF NOT EXISTS `icTattooshop_business_employees` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(60) NOT NULL,
+                `role` VARCHAR(60) NOT NULL,
+                `tattooShopName` VARCHAR(60),
+                FOREIGN KEY (`tattooShopName`) REFERENCES `icTattooshop_business`(`name`) ON DELETE SET NULL ON UPDATE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        ```
+    </Tab>
+    <Tab>
+        File location: ```_INSTALL/tattooESX.sql```
+        ```sql showLineNumbers filename="_INSTALL/tattooESX.sql"
+            ALTER TABLE `users`
+            ADD COLUMN `tattoos` longtext DEFAULT NULL;
+
+            CREATE TABLE IF NOT EXISTS `icTattooshop_business`(
+                `name` VARCHAR(60) NOT NULL,
+                `owner` varchar(60) DEFAULT NULL,
+                `money` int(11) DEFAULT NULL,
+                PRIMARY KEY (`name`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+                CREATE TABLE IF NOT EXISTS `icTattooshop_business_employees` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(60) NOT NULL,
+                `role` VARCHAR(60) NOT NULL,
+                `tattooShopName` VARCHAR(60),
+                FOREIGN KEY (`tattooShopName`) REFERENCES `icTattooshop_business`(`name`) ON DELETE SET NULL ON UPDATE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        ```
+    </Tab>
+</Tabs>
+
+
+### Tattoo Shop and Clothing Configuration
+
+In order for the script to work properly and integrate smoothly with the rest of your FiveM server, it is necessary to correctly configure the tattoo shops and clothing options available to players. This process involves editing the `configurate.lua` file located in the root of the script.
+
+
+    <Steps>
+
+        ### Tattoo Shop Configuration
+
+        Tattoo shops are defined in the `tattoosShops` table. Each entry in this table represents a unique location on the map where players can buy tattoos. You must specify the coordinates of each shop using the `vec3` function.
+
+        File location: ```src/shared/configurate.lua```
+
+        ```lua {1-7} showLineNumbers filename="configurate.lua"
+        tattoosShops = {
+            {coords = vec3(1322.64,-1651.97,52.27)},
+            {coords = vec3(-1153.67,-1425.68,4.95)},
+            ...
+        }
+
+        ```
+
+        <Callout type="info">
+        Remember that you can add or remove entries from the `tattoosShops` table to adjust the locations of tattoo shops on your server.
+        </Callout>
+
+        ### Clothing Configuration
+
+        The customisation of clothing is managed through the **list_cloth** table. Here you can define different categories of clothing and accessories to put **X** outfit when you access the shop. Each entry must specify the name, type, item and model identifiers **male_id** and **female_id**.
+
+        ```lua {1-7} showLineNumbers filename="configurate.lua"
+            list_cloth = {
+            {name = "Hats", type = "Prop", item = 0, male_id = 11, female_id = -1},
+            {name = "Glasses", type = "Prop", item = 1, male_id = 14, female_id = 5},
+            ...
+            }
+        ```
+
+        <Callout type="info">
+        You can add or remove entries from the `list_cloth` table to adjust the clothing options available to players on your server.
+        </Callout>
+
+        ### Advanced Settings
+
+        The Categories table and the AutoHideClothes variable provide advanced options for detailed customisation of character appearance and interaction with tattoo shops.
+
+        - Categories: Defines areas of the body for tattooing and customisation.
+        - AutoHideClothes: Automatically hides clothing in areas where tattoos are applied.
+
+        ```lua {1-7} showLineNumbers filename="configurate.lua"
+        Categories = {
+            ['head'] = {...},
+            ['torso'] = {...},
+            ...
+        }
+
+        AutoHideClothes = true
+        ```
+        <Callout type="info">
+        Be sure to review and adjust these settings according to your server's needs to provide the best possible experience for your players.
+        </Callout>
+
+
+        This example provides a basic structure that you can adapt according to the specific content of your `configurate.lua` file and the requirements of your documentation. Be sure to include any specific details or important notes that users need to know in order to correctly modify the configuration file.
+
+    </Steps>
+
+</Steps>
